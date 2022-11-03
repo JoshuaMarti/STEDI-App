@@ -20,23 +20,24 @@ const todayScore = async() =>{
   const sessionToken = await AsyncStorage.getItem('sessionToken')
   let scoreObject ={};
   try{
-    const tokenResponse = await fetch('https://dev.stedi.me/login',{
-  method: 'POST',
-  body:JSON.stringify({
-    userName: "rom19010@byui.edu",
-    password:"Patricia2596@"
-  })
-});
+  //   const tokenResponse = await fetch('https://dev.stedi.me/login',{
+  // method: 'POST',
+  // body:JSON.stringify({
+  //   userName: "rom19010@byui.edu",
+  //   password:"Patricia2596@"
+  // })
+// });
+const userEmail = await AsyncStorage.getItem('userEmail');
 
- token.current = await tokenResponse.text();
-    const scoreResponse = await fetch('https://dev.stedi.me/riskscore/rom19010@byui.edu',{
+ token.current = await AsyncStorage.getItem('sessionToken');
+    const scoreResponse = await fetch('https://dev.stedi.me/riskscore/',+ userEmail,{
     method:'GET',
     headers:{
       'Content-Type': 'application/json',
      'suresteps.session.token': token.current
     }
   })
-  console.log('token:', token.current);
+  console.log('home.js token:', token.current);
   scoreObject = await scoreResponse.json();
   setScore(scoreObject.score);
   console.log(scoreObject.score);
