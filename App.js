@@ -27,6 +27,7 @@ useEffect(()=>{
 
     if (validateResponse.status == 200){
       const userEmail = await validateResponse.text();
+      await AsyncStorage.setItem('userName',userEmail);
       console.log('app.js30 userEmail', userEmail);
       setIsLoggedIn(true);
     }
@@ -57,7 +58,7 @@ return(
           onPress={async()=>{
             console.log(phoneNumber + ' Button was pressed')
 
-            await fetch(
+            const sendTextResponse = await fetch(
               'https://dev.stedi.me/twofactorlogin/'+ phoneNumber,
               {
                 method: 'POST',
@@ -66,6 +67,10 @@ return(
                 }
               }
             )
+            if (sendTextResponse.status!=200){
+              console.log('Server send text response: '+sendTextResponse.status)
+              Alert('Communication Error','Server responsed to sent text with status: '+sendTextResponse.status)
+            }
           }}
         />
         <TextInput
@@ -104,6 +109,8 @@ return(
             }
             else{
               Alert.alert('Warning', 'An invalid Code was entered.')
+              console.log('response status', loginResponse.status)
+              setIsLoggedIn(false)
             }
           }}
         />
