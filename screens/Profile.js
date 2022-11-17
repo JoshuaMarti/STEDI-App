@@ -28,17 +28,19 @@ exif:false
 // const horizontalData = ['S', 'M', 'T', 'W', 'T', 'F','S'];
 
 const Profile = (props) => {
-  const [userName,setUserName] = useState("")
-  const [cameraPermission, setCameraPermission] = useState(false)
+  const [userName,setUserName] = useState('')
+  const cameraPermission = useRef(false)
   const [profilePhoto, setProfilePhoto] = useState(null);
   const cameraRef = useRef(null)
   const [cameraReady, setCameraReady] = useState(false);
 
   useEffect(()=>{
     const getUserName = async ()=>{
-      const cameraPermission = await Camera.requestCameraPermissionsAsync()
-      setCameraPermission(cameraPermission)
+      const cameraPermission2 = await Camera.requestCameraPermissionsAsync()
+      console.log('Camera permission',cameraPermission2)
+      cameraPermission.current=cameraPermission2
       const userName = await AsyncStorage.getItem('userName');
+      console.log('Profile userName', userName)
       setUserName(userName)
       await AsyncStorage.removeItem('profilePhoto')
       const profilePhoto = await AsyncStorage.getItem('profilePhoto')
@@ -58,9 +60,12 @@ const Profile = (props) => {
   console.log('Error', error)
       }
     }
-      if(profilePhoto == null){
+console.log('Profile Photo State',profilePhoto)
+console.log('Camera Ready',cameraReady)
+    if(profilePhoto == null){
         return(
-          <View style = {styles.comtainer}>
+          
+          <View style = {styles.container}>
             <Camera style={styles.camera} ref={cameraRef} onCameraReady={()=>{setCameraReady(true)}}>
               <View style={styles.buttonContainer}>
                 {cameraReady?<TouchableOpacity style={styles.button} onPress={async ()=> {
@@ -71,7 +76,7 @@ const Profile = (props) => {
                   setProfilePhoto(picture.uri)
                 }}>
                   <Text style={styles.text}>Take Picture</Text>
-                  </TouchableOpacity>: null}
+                  </TouchableOpacity>:null}
               </View>
             </Camera>
           </View>
