@@ -27,7 +27,7 @@ useEffect(()=>{
 
     if (validateResponse.status == 200){
       const userEmail = await validateResponse.text();
-      await AsyncStorage.setItem('userName',userEmail);
+      await AsyncStorage.setItem('userEmail',userEmail);
       console.log('app.js30 userEmail', userEmail);
       setIsLoggedIn(true);
     }
