@@ -4,7 +4,7 @@ import { StyleSheet, Text, View, Image, SafeAreaView , Share, ScrollView, Button
 import { Card, CardTitle, CardContent} from 'react-native-material-cards';
 import BarChart from 'react-native-bar-chart';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {Camera} from 'expo-camera';
+import {Camera, CameraType} from 'expo-camera';
 
 const cameraOptions={
 quality:0,
@@ -42,7 +42,7 @@ const Profile = (props) => {
       const userName = await AsyncStorage.getItem('userEmail');
       console.log('Profile userName', userName)
       setUserName(userName)
-      await AsyncStorage.removeItem('profilePhoto')
+      //await AsyncStorage.removeItem('profilePhoto')
       const profilePhoto = await AsyncStorage.getItem('profilePhoto')
       setProfilePhoto(profilePhoto)
     }
@@ -50,7 +50,7 @@ const Profile = (props) => {
   })
   const myCustomerShare = async() =>{
     const shareOptions = {
-      message: 'This is a test'
+      message: 'Check out STEDI!'
     }
     try{
       const shareResponse = await Share.share(shareOptions)
@@ -60,13 +60,19 @@ const Profile = (props) => {
   console.log('Error', error)
       }
     }
+const retakePhoto = async() =>{
+  console.log('Clearing Picture',profilePhoto)
+  await AsyncStorage.removeItem('profilePhoto')
+  setProfilePhoto(null)
+  console.log('Picture cleared successfully',profilePhoto)
+    }
 console.log('Profile Photo State',profilePhoto)
 console.log('Camera Ready',cameraReady)
     if(profilePhoto == null){
         return(
           
           <View style = {styles.container}>
-            <Camera style={styles.camera} ref={cameraRef} onCameraReady={()=>{setCameraReady(true)}}>
+            <Camera style={styles.camera} ref={cameraRef} type={CameraType.front} onCameraReady={()=>{setCameraReady(true)}}>
               <View style={styles.buttonContainer}>
                 {cameraReady?<TouchableOpacity style={styles.button} onPress={async ()=> {
 
@@ -97,12 +103,16 @@ elevation: 4}}>
      <CardContent>
      <Image style={{height: 100, width:100, borderRadius: 75}}
       source={{uri:profilePhoto}} />
+      
     <Text style={{marginTop:10,marginBottom:10,fontWeight: 'bold'}}>{userName}</Text>
 
     <Text style={{marginTop:20,marginBottom:2}}>This Week's progress</Text>
 {/* <BarChart barColor='green' data={data} horizontalData={horizontalData} /> */}
      <View style={{ marginTop: 50 }}>
       <Button onPress={myCustomerShare} title="Share" />
+    </View>
+    <View style={{ marginTop: 50 }}>
+      <Button onPress={retakePhoto} title="Take New Profile Photo" />
     </View>
     </CardContent>
     </Card>

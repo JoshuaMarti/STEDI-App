@@ -10,6 +10,7 @@ import { Card, CardTitle, CardContent, CardAction, CardButton, CardImage, button
 import exerciseImg from '../image/exercise2.png';
 import ProgressBar from 'react-native-progress/Bar';
 import { FontAwesome5 } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 // import { Ionicons} from 'react-native-vector-icons';
 // import { Button } from 'react-native-elements';
 // import { IconButton } from 'react-native-paper';
@@ -19,7 +20,7 @@ export default function Counter(props) {
  const [completionCount, setCompletionCount] = useState(0);
  const [counter, setCounter] = useState(3); //(180 3 mins)
  const [score, setScore] = useState(0);
-
+ const userEmail = AsyncStorage.getItem('userEmail')
  const [currentScreen, setCurrentScreen] = useState('counter');
 useEffect(()=>{
   if (currentScreen == 'counter'){
@@ -33,6 +34,17 @@ useEffect(()=>{
     }
   }
 },[completionCount]);
+
+useEffect(()=>{
+  LoadInfo();
+ },[]);
+ const LoadInfo = async() =>{
+  const userEmail = await AsyncStorage.getItem('userEmail');
+
+ token.current = await AsyncStorage.getItem('sessionToken');
+ console.log('Email Counter 45', userEmail)
+ console.log('token Counter 46', token.current)
+}
 
  useEffect(() => {
   counter > 0 && setTimeout(() => {    
@@ -69,7 +81,7 @@ const stopTime = useRef(0);
 const testTime = useRef(0);
 const token = useRef("");
 
-
+//console.log('Counter UN', userEmail, 'Counter Token', token.current)
 const savingSteps = async(event) =>{
 //how to get startime, stepPoints, StopTime, TestTime
 let stepPoints = [];
@@ -89,16 +101,16 @@ stepPoints  = [];
 }); 
 stepPoints.length=30;
   try{
-    const tokenResponse = await fetch('https://dev.stedi.me/login',{
-  method: 'POST',
-  body:JSON.stringify({
-    userName: "rom19010@byui.edu",
-    password:"Patricia2596@"
-  })
-});
+  //  const tokenResponse = await fetch('https://dev.stedi.me/login',{
+  //method: 'POST',
+  //body:JSON.stringify({
+  //  userName: "rom19010@byui.edu",
+  //  password:"Patricia2596@"
+  //})
+//});
 
- token.current = await tokenResponse.text();
-console.log('token:' ,token.current);
+console.log('Counter 101 token:' ,token.current);
+console.log('Counter 102 userEmail', userEmail)
 await fetch('https://dev.stedi.me/rapidsteptest',{
   method:'POST',
   headers:{
@@ -106,7 +118,7 @@ await fetch('https://dev.stedi.me/rapidsteptest',{
    'suresteps.session.token': token.current
   },
   body:JSON.stringify({
-customer:'rom19010@byui.edu',
+customer: userEmail,
 startTime: startTime.current,
 stepPoints,
 stopTime: stopTime.current,
@@ -125,13 +137,17 @@ totalSteps:30
 const getResults = async () =>{
 
 try{
-  const scoreResponse = await fetch('https://dev.stedi.me/riskscore/rom19010@byui.edu',{
-  method:'GET',
-  headers:{
-    'Content-Type': 'application/json',
-   'suresteps.session.token': token.current
-  }
-})
+  const userEmail = await AsyncStorage.getItem('userEmail');
+
+ token.current = await AsyncStorage.getItem('sessionToken');
+    const scoreResponse = await fetch('https://dev.stedi.me/riskscore/',+ userEmail,{
+    method:'GET',
+    headers:{
+      'Content-Type': 'application/json',
+     'suresteps.session.token': token.current
+    }
+  })
+  console.log('home.js token:', token.current);
 const scoreObject = await scoreResponse.json();
 console.log("score:",scoreObject.score);
 setScore(scoreObject.score);
