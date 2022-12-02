@@ -20,7 +20,6 @@ export default function Counter(props) {
  const [completionCount, setCompletionCount] = useState(0);
  const [counter, setCounter] = useState(3); //(180 3 mins)
  const [score, setScore] = useState(0);
- const userEmail = AsyncStorage.getItem('userEmail')
  const [currentScreen, setCurrentScreen] = useState('counter');
 useEffect(()=>{
   if (currentScreen == 'counter'){
@@ -110,7 +109,7 @@ stepPoints.length=30;
 //});
 
 console.log('Counter 101 token:' ,token.current);
-console.log('Counter 102 userEmail', userEmail)
+console.log('Counter 102 userEmail', 'HC mar19113@byui.edu')
 await fetch('https://dev.stedi.me/rapidsteptest',{
   method:'POST',
   headers:{
@@ -118,7 +117,7 @@ await fetch('https://dev.stedi.me/rapidsteptest',{
    'suresteps.session.token': token.current
   },
   body:JSON.stringify({
-customer: userEmail,
+customer: 'mar19113@byui.edu',
 startTime: startTime.current,
 stepPoints,
 stopTime: stopTime.current,

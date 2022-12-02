@@ -17,7 +17,7 @@ const Home = (props) => {
 
 //today score
 const todayScore = async() =>{
-  const sessionToken = await AsyncStorage.getItem('sessionToken')
+  
   let scoreObject ={};
   try{
   //   const tokenResponse = await fetch('https://dev.stedi.me/login',{
